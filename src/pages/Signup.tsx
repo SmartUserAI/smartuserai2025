@@ -73,12 +73,17 @@ const Signup = () => {
     try {
       const redirectUrl = `${window.location.origin}/`;
       
-      // Create auth user
+      // Create auth user with metadata
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
-          emailRedirectTo: redirectUrl
+          emailRedirectTo: redirectUrl,
+          data: {
+            admission_id: formData.admissionId,
+            parent_name: formData.parentName,
+            mobile_number: formData.mobileNumber,
+          }
         }
       });
 
