@@ -31,9 +31,10 @@ const Dashboard = () => {
           .from('parent_profiles')
           .select('admission_id, parent_name, mobile_number')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
-        if (error) {
+        if (error && error.code !== 'PGRST116') {
+          console.error('Profile fetch error:', error);
           toast({
             title: "Error",
             description: "Failed to load profile data",
@@ -82,12 +83,32 @@ const Dashboard = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <p className="text-muted-foreground">Profile not found</p>
-          <Button onClick={handleLogout} variant="outline" className="mt-4">
-            Sign Out
-          </Button>
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-2xl mx-auto pt-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">Complete Your Profile</CardTitle>
+              <p className="text-muted-foreground">
+                Your account was created before profile setup was automated. 
+                Please sign up again to create your parent profile.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="border-t pt-4">
+                <p className="text-sm text-muted-foreground">Current Email</p>
+                <p className="text-base">{user?.email}</p>
+              </div>
+              
+              <div className="border-t pt-4 space-y-2">
+                <Button onClick={handleLogout} variant="outline">
+                  Sign Out
+                </Button>
+                <p className="text-sm text-muted-foreground">
+                  After signing out, please create a new account to complete your profile setup.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
