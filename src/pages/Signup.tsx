@@ -100,31 +100,30 @@ const Signup = () => {
       }
 
       if (authData.user) {
-        // Insert parent profile
-        const { error: profileError } = await supabase
-          .from('parent_profiles')
-          .insert({
-            user_id: authData.user.id,
-            admission_id: formData.admissionId,
-            parent_name: formData.parentName,
-            mobile_number: formData.mobileNumber,
-          });
-
-        if (profileError) {
-          toast({
-            title: "Error",
-            description: "Failed to create profile: " + profileError.message,
-            variant: "destructive",
-          });
-          return;
-        }
-
+        // For unconfirmed users, we'll create the profile after email confirmation
+        // For now, just show success message
         toast({
           title: "Success",
-          description: "Signup complete! Welcome aboard.",
+          description: "Account created! Please check your email to confirm your account before logging in.",
         });
 
-        navigate('/login');
+        // Clear form
+        setFormData({
+          admissionId: '',
+          parentName: '',
+          email: '',
+          mobileNumber: '',
+          password: '',
+        });
+
+        // Navigate to login after a delay
+        setTimeout(() => navigate('/login'), 2000);
+      } else {
+        toast({
+          title: "Info", 
+          description: "Please check your email to confirm your account.",
+        });
+        setTimeout(() => navigate('/login'), 2000);
       }
     } catch (error) {
       toast({
